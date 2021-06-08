@@ -1,5 +1,7 @@
-package com.romantulchak.linq;
+package com.romantulchak.type.impl;
 
+import com.romantulchak.linq.LINQ;
+import com.romantulchak.linq.LinqManager;
 import com.romantulchak.type.CommandType;
 import com.romantulchak.type.ConditionType;
 

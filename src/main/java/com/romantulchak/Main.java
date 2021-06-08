@@ -1,5 +1,6 @@
 package com.romantulchak;
 
+import com.romantulchak.db.DatabaseConnection;
 import com.romantulchak.enums.ComparisonConstant;
 import com.romantulchak.linq.LinqManager;
 import com.romantulchak.model.Person;
@@ -16,5 +17,6 @@ public class Main {
         LinqManager<Person> linqManager = new LinqManager<>();
         linqManager.linq().selectAll().from("Test").where("name", EQUAL, "roman").ok().execute();
 
+        DatabaseConnection.getInstance("/home/romantulchak/IdeaProjects/JavaLINQ/src/main/resources/config.properties");
     }
 }

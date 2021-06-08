@@ -1,4 +1,4 @@
-package com.romantulchak.linq;
+package com.romantulchak.type.impl;
 
 import com.romantulchak.exception.ArgumentIsEmptyException;
 import com.romantulchak.exception.UncorrectedNumberOfArgumentsException;

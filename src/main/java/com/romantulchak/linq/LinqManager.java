@@ -3,6 +3,7 @@ package com.romantulchak.linq;
 import com.romantulchak.enums.ComparisonConstant;
 import com.romantulchak.type.Invoke;
 import com.romantulchak.type.SelectiveType;
+import com.romantulchak.type.impl.SelectiveTypeImpl;
 
 import static com.romantulchak.constants.LINQConstant.SPACE;
 

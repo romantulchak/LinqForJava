@@ -1,6 +1,8 @@
-package com.romantulchak.linq;
+package com.romantulchak.type.impl;
 
 import com.romantulchak.enums.ComparisonConstant;
+import com.romantulchak.linq.LINQ;
+import com.romantulchak.linq.LinqManager;
 import com.romantulchak.type.UnifyingType;
 
 import static com.romantulchak.constants.LINQConstant.AND;
