@@ -2,5 +2,5 @@ package com.romantulchak.linq;
 
 
 public interface LINQ<T> {
-     String execute();
+     T execute(Class<T> clazz);
 }

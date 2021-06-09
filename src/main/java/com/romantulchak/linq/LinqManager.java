@@ -5,10 +5,14 @@ import com.romantulchak.type.Invoke;
 import com.romantulchak.type.SelectiveType;
 import com.romantulchak.type.impl.SelectiveTypeImpl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.romantulchak.constants.LINQConstant.SPACE;
 
-public class LinqManager<T> implements Invoke<T> {
+public class LinqManager<T extends Persistable> implements Invoke<T> {
     protected StringBuilder stringBuilder = new StringBuilder();
+    protected List<String> selectedArguments = new ArrayList<>();
 //
 //    @Override
 //    public SelectiveType<T> select(String... args) {
@@ -119,9 +123,9 @@ public class LinqManager<T> implements Invoke<T> {
         throw new RuntimeException("Comparison is null");
     }
 
-    public String execute() {
-        System.out.println(stringBuilder);
-        return stringBuilder.toString();
+    public T execute(Class<T> clazz) {
+        LinqMapper<T> linqMapper = new LinqMapper<>(selectedArguments);
+        return linqMapper.createObject(clazz, stringBuilder.toString()).orElseThrow();
     }
 
     @Override

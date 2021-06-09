@@ -19,10 +19,10 @@ public class DatabaseConnection {
     private String username;
     private String password;
 
-    private DatabaseConnection(String pathToPropertiesFile){
+    private DatabaseConnection(){
         try {
             Class.forName("org.postgresql.Driver");
-            initializeProperties(pathToPropertiesFile);
+            initializeProperties();
             this.connection = DriverManager.getConnection(url, username, password);
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
@@ -33,13 +33,13 @@ public class DatabaseConnection {
         return connection;
     }
 
-    public static DatabaseConnection getInstance(String pathToPropertiesFile){
+    public static DatabaseConnection getInstance(){
         if(databaseConnection == null){
-            databaseConnection = new DatabaseConnection(pathToPropertiesFile);
+            databaseConnection = new DatabaseConnection();
         }else {
             try {
                 if(databaseConnection.getConnection().isClosed()){
-                    databaseConnection = new DatabaseConnection(pathToPropertiesFile);
+                    databaseConnection = new DatabaseConnection();
                 }
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
@@ -48,15 +48,16 @@ public class DatabaseConnection {
         return databaseConnection;
     }
 
-    private void initializeProperties(String pathToPropertiesFile){
-        try(InputStream inputStream = new FileInputStream(pathToPropertiesFile)) {
+    private void initializeProperties(){
+        String filename = "E:\\Applications\\LinqForJava\\src\\main\\resources\\config.properties";
+        try(InputStream inputStream = new FileInputStream(filename)) {
             Properties properties = new Properties();
             properties.load(inputStream);
             url = properties.getProperty("database.url");
             username = properties.getProperty("database.username");
             password = properties.getProperty("database.password");
         }catch (IOException e){
-            throw new CannotReadFileException(pathToPropertiesFile);
+            throw new CannotReadFileException(filename);
         }
     }
 

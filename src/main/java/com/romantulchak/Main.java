@@ -11,12 +11,16 @@ import static com.romantulchak.enums.ComparisonConstant.EQUAL;
 public class Main {
 
     public static void main(String[] args) {
-        Person person = new Person("Roman");
-
 
         LinqManager<Person> linqManager = new LinqManager<>();
-        linqManager.linq().selectAll().from("Test").where("name", EQUAL, "roman").ok().execute();
+        Person person = linqManager
+                .linq()
+                .select("name", "height")
+                .from("test")
+                .where("name", EQUAL, "roman")
+                .execute(Person.class);
+        System.out.println(person);
 
-        DatabaseConnection.getInstance("/home/romantulchak/IdeaProjects/JavaLINQ/src/main/resources/config.properties");
+
     }
 }
