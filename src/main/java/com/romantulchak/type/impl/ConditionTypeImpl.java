@@ -15,10 +15,11 @@ public class ConditionTypeImpl<T extends Persistable> extends LinqManager<T> imp
 
     private final StringBuilder stringBuilder;
     private final List<String> selectedArguments;
-
-    public ConditionTypeImpl(StringBuilder stringBuilder, List<String> selectedArguments){
+    private final T clazz;
+    public ConditionTypeImpl(StringBuilder stringBuilder, List<String> selectedArguments, T clazz){
         this.stringBuilder = stringBuilder;
         this.selectedArguments = selectedArguments;
+        this.clazz = clazz;
     }
 
 
@@ -31,7 +32,7 @@ public class ConditionTypeImpl<T extends Persistable> extends LinqManager<T> imp
                 .append("'")
                 .append(value)
                 .append("'");
-        return new UnifyingTypeImpl<>(stringBuilder, selectedArguments);
+        return new UnifyingTypeImpl<>(stringBuilder, selectedArguments, clazz);
     }
 
 

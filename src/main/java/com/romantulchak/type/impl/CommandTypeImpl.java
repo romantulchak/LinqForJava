@@ -13,9 +13,12 @@ import static com.romantulchak.constants.LINQConstant.*;
 public class CommandTypeImpl<T extends Persistable> extends LinqManager<T> implements CommandType<T>, LINQ<T> {
     private final StringBuilder stringBuilder;
     private final List<String> selectedArguments;
-    public CommandTypeImpl(StringBuilder stringBuilder, List<String> selectedArguments) {
+    private final T clazz;
+
+    public CommandTypeImpl(StringBuilder stringBuilder, List<String> selectedArguments, T clazz) {
         this.stringBuilder = stringBuilder;
         this.selectedArguments = selectedArguments;
+        this.clazz = clazz;
     }
 
     @Override
@@ -29,7 +32,7 @@ public class CommandTypeImpl<T extends Persistable> extends LinqManager<T> imple
         stringBuilder.append(FROM)
                 .append(SPACE)
                 .append(table);
-        return new ConditionTypeImpl<>(stringBuilder, selectedArguments);
+        return new ConditionTypeImpl<>(stringBuilder, selectedArguments, clazz);
     }
 
     @Override
@@ -39,7 +42,7 @@ public class CommandTypeImpl<T extends Persistable> extends LinqManager<T> imple
                     .append(FROM)
                     .append(SPACE)
                     .append(clazz.getSimpleName());
-            return new ConditionTypeImpl<>(stringBuilder, selectedArguments);
+            return new ConditionTypeImpl<>(stringBuilder, selectedArguments, this.clazz);
         }
         throw new RuntimeException("Class is null");
     }

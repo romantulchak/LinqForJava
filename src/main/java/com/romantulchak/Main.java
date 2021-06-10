@@ -15,10 +15,10 @@ public class Main {
         LinqManager<Person> linqManager = new LinqManager<>();
         Person person = linqManager
                 .linq()
-                .select("name", "height")
+                .select("name")
                 .from("test")
                 .where("name", EQUAL, "roman")
-                .execute(Person.class);
+                .execute();
         System.out.println(person);
 
 

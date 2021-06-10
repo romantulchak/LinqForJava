@@ -14,10 +14,11 @@ public class UnifyingTypeImpl<T extends Persistable> extends LinqManager<T> impl
 
     private final StringBuilder stringBuilder;
     private final List<String> selectedArguments;
-
-    public UnifyingTypeImpl(StringBuilder stringBuilder, List<String> selectedArguments) {
+    private final T clazz;
+    public UnifyingTypeImpl(StringBuilder stringBuilder, List<String> selectedArguments, T clazz) {
         this.stringBuilder = stringBuilder;
         this.selectedArguments = selectedArguments;
+        this.clazz = clazz;
     }
 
     @Override
@@ -30,9 +31,9 @@ public class UnifyingTypeImpl<T extends Persistable> extends LinqManager<T> impl
     }
 
     @Override
-    public T execute(Class<T> clazz) {
+    public T execute(T...classes) {
         super.stringBuilder = stringBuilder;
         super.selectedArguments = selectedArguments;
-        return super.execute(clazz);
+        return super.execute(classes);
     }
 }

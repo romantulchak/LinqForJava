@@ -19,12 +19,12 @@ public class LinqMapper<T extends Persistable> {
         this.selectedArguments = selectedArguments;
     }
 
-    public Optional<T> createObject(Class<T> clazz, String query) {
+    public Optional<T> createObject(T clazz, String query) {
         DatabaseConnection instance = DatabaseConnection.getInstance();
         try {
             Statement statement = instance.getConnection().createStatement();
             ResultSet resultSet = statement.executeQuery(query);
-            T object = clazz.getConstructor().newInstance();
+            T object = (T) clazz.getClass().getConstructor().newInstance();
             initializeObject(resultSet, object);
             return Optional.of(object);
 
@@ -42,8 +42,6 @@ public class LinqMapper<T extends Persistable> {
             for (Field field : fields) {
                 try {
                     getDataFromResultSet(resultSet, object, field);
-//                    Method method = LinqMapper.class.getDeclaredMethod("get" + StringUtils.capitalize(field.getType().getSimpleName()) + "Data", ResultSet.class, Persistable.class, field.getClass());
-//                    method.invoke(linqMapper, resultSet, object, field);
                 } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
                     e.printStackTrace();
                 }
@@ -53,9 +51,9 @@ public class LinqMapper<T extends Persistable> {
 
     private List<Field> getOnlySelectedFields(List<Field> fields) {
         List<Field> fieldsToReturn = new ArrayList<>();
-        for (String s : selectedArguments) {
+        for (String argument : selectedArguments) {
             for (Field field : fields) {
-                if(field.getName().equals(s)){
+                if(field.getName().equals(argument)){
                     fieldsToReturn.add(field);
                 }
             }
@@ -75,35 +73,6 @@ public class LinqMapper<T extends Persistable> {
         field.set(object, result);
     }
 
-    private void getStringData(ResultSet resultSet, Persistable object, Field field) throws SQLException, IllegalAccessException {
-        String data = resultSet.getString(field.getName());
-        setData(object, field, data);
-    }
-
-    private void getIntegerData(ResultSet resultSet, Persistable object, Field field) throws SQLException, IllegalAccessException {
-        int data = resultSet.getInt(field.getName());
-        setData(object, field, data);
-    }
-
-    private void getLongData(ResultSet resultSet, Persistable object, Field field) throws SQLException, IllegalAccessException {
-        long data = resultSet.getLong(field.getName());
-        setData(object, field, data);
-    }
-
-    private void getBooleanData(ResultSet resultSet, Persistable object, Field field) throws SQLException, IllegalAccessException {
-        boolean data = resultSet.getBoolean(field.getName());
-        setData(object, field, data);
-    }
-
-    private void getByteData(ResultSet resultSet, Persistable object, Field field) throws SQLException, IllegalAccessException {
-        byte data = resultSet.getByte(field.getName());
-        setData(object, field, data);
-    }
-
-    private void getShortData(ResultSet resultSet, Persistable object, Field field) throws SQLException, IllegalAccessException {
-        short data = resultSet.getShort(field.getName());
-        setData(object, field, data);
-    }
 
     private <E> void setData(Persistable t, Field field, E data) throws IllegalAccessException {
         field.setAccessible(true);
