@@ -1,6 +1,8 @@
 package com.romantulchak.linq;
 
 import com.romantulchak.db.DatabaseConnection;
+import com.romantulchak.exception.NotUniqueElementException;
+import com.romantulchak.linq.manager.LinqManagerObject;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -12,23 +14,41 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
 
-public class LinqMapper<T extends Persistable> {
+public class LinqMapper<T> {
     private final List<String> selectedArguments;
+    private final Class<?> executorClass;
 
-    public LinqMapper(List<String> selectedArguments){
+    public LinqMapper(List<String> selectedArguments, Class<?> executorClass) {
         this.selectedArguments = selectedArguments;
+        this.executorClass = executorClass;
     }
 
-    public Optional<T> createObject(T clazz, String query) {
-        DatabaseConnection instance = DatabaseConnection.getInstance();
+    public Optional<T> createObject(Class<T> clazz, String query) {
+        ResultSet resultSet = getResultSet(query).orElseThrow(() -> new RuntimeException("Result set is null"));
+
         try {
-            Statement statement = instance.getConnection().createStatement();
-            ResultSet resultSet = statement.executeQuery(query);
-            T object = (T) clazz.getClass().getConstructor().newInstance();
+            T object = clazz.getConstructor().newInstance();
             initializeObject(resultSet, object);
             return Optional.of(object);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | SQLException e) {
+            e.printStackTrace();
+        }
+        return Optional.empty();
+    }
 
-        } catch (SQLException | NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException throwables) {
+    private Optional<ResultSet> getResultSet(String query) {
+        DatabaseConnection instance = DatabaseConnection.getInstance();
+        try {
+            Statement statement = instance.getConnection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet resultSet = statement.executeQuery(query);
+            if (resultSet.last()) {
+                int row = resultSet.getRow();
+                if (row != 1 && executorClass.equals(LinqManagerObject.class)) {
+                    throw new NotUniqueElementException(row);
+                }
+            }
+            return Optional.of(resultSet);
+        } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
         return Optional.empty();
@@ -38,7 +58,6 @@ public class LinqMapper<T extends Persistable> {
         while (resultSet.next()) {
             List<Field> fields = new LinkedList<>(Arrays.asList(object.getClass().getDeclaredFields()));
             fields = getOnlySelectedFields(fields);
-            LinqMapper<T> linqMapper = new LinqMapper<>(selectedArguments);
             for (Field field : fields) {
                 try {
                     getDataFromResultSet(resultSet, object, field);
@@ -53,7 +72,7 @@ public class LinqMapper<T extends Persistable> {
         List<Field> fieldsToReturn = new ArrayList<>();
         for (String argument : selectedArguments) {
             for (Field field : fields) {
-                if(field.getName().equals(argument)){
+                if (field.getName().equals(argument)) {
                     fieldsToReturn.add(field);
                 }
             }
@@ -61,11 +80,11 @@ public class LinqMapper<T extends Persistable> {
         return fieldsToReturn;
     }
 
-    private void getDataFromResultSet(ResultSet resultSet, Persistable object, Field field) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    private void getDataFromResultSet(ResultSet resultSet, T object, Field field) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         Method method;
-        if(field.getType().equals(Integer.class)){
+        if (field.getType().equals(Integer.class)) {
             method = ResultSet.class.getDeclaredMethod("getInt", String.class);
-        }else {
+        } else {
             method = ResultSet.class.getDeclaredMethod("get" + StringUtils.capitalize(field.getType().getSimpleName()), String.class);
         }
         Object result = method.invoke(resultSet, field.getName());
@@ -78,5 +97,4 @@ public class LinqMapper<T extends Persistable> {
         field.setAccessible(true);
         field.set(t, data);
     }
-
 }

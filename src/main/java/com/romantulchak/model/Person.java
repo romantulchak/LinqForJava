@@ -12,7 +12,7 @@ public class Person implements Persistable {
 
     private byte memory;
 
-    public Person(){
+    public Person() {
 
     }
 

@@ -1,25 +1,24 @@
 package com.romantulchak;
 
-import com.romantulchak.db.DatabaseConnection;
-import com.romantulchak.enums.ComparisonConstant;
-import com.romantulchak.linq.LinqManager;
+import com.romantulchak.linq.Manager;
+import com.romantulchak.linq.manager.LinqManagerCollection;
+import com.romantulchak.linq.manager.LinqManagerObject;
 import com.romantulchak.model.Person;
-
-import static com.romantulchak.enums.ComparisonConstant.*;
-import static com.romantulchak.enums.ComparisonConstant.EQUAL;
 
 public class Main {
 
     public static void main(String[] args) {
 
-        LinqManager<Person> linqManager = new LinqManager<>();
-        Person person = linqManager
-                .linq()
-                .select("name")
-                .from("test")
-                .where("name", EQUAL, "roman")
-                .execute();
-        System.out.println(person);
+        Manager<Person> linqManagerObject = new LinqManagerCollection<>();
+//        Person persons = linqManagerObject
+//                .linq()
+//                .selectAll()
+//                .from("test")
+//                .execute();
+//        System.out.println(persons);
+
+        Person test = linqManagerObject.linq().selectAll().from("test").execute();
+        System.out.println(test);
 
 
     }

@@ -1,21 +1,22 @@
 package com.romantulchak.type.impl;
 
 import com.romantulchak.linq.LINQ;
-import com.romantulchak.linq.LinqManager;
-import com.romantulchak.linq.Persistable;
+import com.romantulchak.linq.Manager;
+import com.romantulchak.linq.manager.LinqManagerObject;
 import com.romantulchak.type.CommandType;
 import com.romantulchak.type.ConditionType;
+import com.romantulchak.type.SelectiveType;
 
 import java.util.List;
 
 import static com.romantulchak.constants.LINQConstant.*;
 
-public class CommandTypeImpl<T extends Persistable> extends LinqManager<T> implements CommandType<T>, LINQ<T> {
+public class CommandTypeObject<T> extends Manager<T> implements CommandType<T> {
     private final StringBuilder stringBuilder;
     private final List<String> selectedArguments;
-    private final T clazz;
+    private final Class<T> clazz;
 
-    public CommandTypeImpl(StringBuilder stringBuilder, List<String> selectedArguments, T clazz) {
+    public CommandTypeObject(StringBuilder stringBuilder, List<String> selectedArguments, Class<T> clazz) {
         this.stringBuilder = stringBuilder;
         this.selectedArguments = selectedArguments;
         this.clazz = clazz;
@@ -32,7 +33,7 @@ public class CommandTypeImpl<T extends Persistable> extends LinqManager<T> imple
         stringBuilder.append(FROM)
                 .append(SPACE)
                 .append(table);
-        return new ConditionTypeImpl<>(stringBuilder, selectedArguments, clazz);
+        return new ConditionTypeObject<>(stringBuilder, selectedArguments, clazz);
     }
 
     @Override
@@ -42,8 +43,9 @@ public class CommandTypeImpl<T extends Persistable> extends LinqManager<T> imple
                     .append(FROM)
                     .append(SPACE)
                     .append(clazz.getSimpleName());
-            return new ConditionTypeImpl<>(stringBuilder, selectedArguments, this.clazz);
+            return new ConditionTypeObject<>(stringBuilder, selectedArguments, this.clazz);
         }
         throw new RuntimeException("Class is null");
     }
+
 }
