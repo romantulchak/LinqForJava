@@ -1,6 +1,7 @@
 package com.romantulchak.linq;
 
 import com.romantulchak.db.DatabaseConnection;
+import com.romantulchak.exception.CannotCreateInstanceOfClass;
 import com.romantulchak.exception.NotUniqueElementException;
 import com.romantulchak.linq.manager.LinqManagerObject;
 import org.apache.commons.lang3.ArrayUtils;
@@ -25,15 +26,33 @@ public class LinqMapper<T> {
 
     public Optional<T> createObject(Class<T> clazz, String query) {
         ResultSet resultSet = getResultSet(query).orElseThrow(() -> new RuntimeException("Result set is null"));
+        T object = getObjectFromClass(clazz).orElseThrow(() -> new CannotCreateInstanceOfClass(clazz.getSimpleName()));
+        initializeObject(resultSet, object);
+        return Optional.of(object);
+    }
 
+    private Optional<T> getObjectFromClass(Class<T> clazz) {
         try {
-            T object = clazz.getConstructor().newInstance();
-            initializeObject(resultSet, object);
-            return Optional.of(object);
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | SQLException e) {
+            return Optional.of(clazz.getConstructor().newInstance());
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             e.printStackTrace();
         }
         return Optional.empty();
+    }
+
+    public Collection<T> createObjects(Class<T> clazz, String query){
+        ResultSet resultSet = getResultSet(query).orElseThrow(() -> new RuntimeException("Result set is null"));
+        T object = getObjectFromClass(clazz).orElseThrow(() -> new CannotCreateInstanceOfClass(clazz.getSimpleName()));
+        Collection<T> objects = new ArrayList<>();
+        try {
+            while (resultSet.next()) {
+                initializeObject(resultSet, object);
+                objects.add(object);
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return objects;
     }
 
     private Optional<ResultSet> getResultSet(String query) {
@@ -54,16 +73,14 @@ public class LinqMapper<T> {
         return Optional.empty();
     }
 
-    private void initializeObject(ResultSet resultSet, T object) throws SQLException, IllegalAccessException {
-        while (resultSet.next()) {
-            List<Field> fields = new LinkedList<>(Arrays.asList(object.getClass().getDeclaredFields()));
-            fields = getOnlySelectedFields(fields);
-            for (Field field : fields) {
-                try {
-                    getDataFromResultSet(resultSet, object, field);
-                } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-                    e.printStackTrace();
-                }
+    private void initializeObject(ResultSet resultSet, T object) {
+        List<Field> fields = new LinkedList<>(Arrays.asList(object.getClass().getDeclaredFields()));
+        fields = getOnlySelectedFields(fields);
+        for (Field field : fields) {
+            try {
+                getDataFromResultSet(resultSet, object, field);
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                e.printStackTrace();
             }
         }
     }

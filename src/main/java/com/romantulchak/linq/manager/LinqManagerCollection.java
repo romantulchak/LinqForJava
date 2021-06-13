@@ -1,24 +1,36 @@
 package com.romantulchak.linq.manager;
 
+import com.romantulchak.linq.LinqCollection;
 import com.romantulchak.linq.Manager;
-import com.romantulchak.type.SelectiveType;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
-public class LinqManagerCollection<T> extends Manager<T> {
-    protected Collection<T> objects;
+public class LinqManagerCollection<T,E> implements LinqCollection<T> {
+//    protected Collection<T> objects;
+//
+//    protected StringBuilder stringBuilder = new StringBuilder();
+//    protected List<String> selectedArguments = new ArrayList<>();
+//    protected Class<T> clazz;
+//    protected static Class<?> currentClass;
+//    @SafeVarargs
+//    public LinqManagerCollection(T... classes) {
+//        if (currentClass == null) {
+//            currentClass = this.getClass();
+//        }
+//        clazz = initializeGenericClass(classes);
+//    }
+//
+//
+//    @Override
+//    public Collection<T> execute() {
+//        return null;
+//    }
 
-
-    @SafeVarargs
-    public LinqManagerCollection(T... classes) {
-        if (currentClass == null) {
-            currentClass = this.getClass();
-        }
-        super.clazz = initializeGenericClass(classes);
-    }
 
     @Override
-    public SelectiveType<T> linq(T... classes) {
+    public Collection<T> execute() {
         return null;
     }
 }

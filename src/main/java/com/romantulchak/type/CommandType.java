@@ -2,9 +2,9 @@ package com.romantulchak.type;
 
 
 public interface CommandType<T> {
-    CommandType<T> distinct();
+    CommandType<T> executeDistinct();
 
-    ConditionType<T> from(Class<?> clazz);
+    ConditionType<T> executeFrom(Class<?> clazz);
 
-    ConditionType<T> from(String table);
+    ConditionType<T> executeFrom(String table);
 }

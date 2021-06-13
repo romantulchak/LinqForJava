@@ -7,20 +7,18 @@ import com.romantulchak.type.SelectiveType;
 import com.romantulchak.util.ClassUtility;
 import org.apache.commons.lang3.StringUtils;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static com.romantulchak.constants.LINQConstant.*;
 
 public class SelectiveTypeImpl<T> implements SelectiveType<T> {
-    private final StringBuilder stringBuilder;
+    protected final StringBuilder stringBuilder;
 
-    private final Class<T> clazz;
+    protected final Class<T> clazz;
 
     //TODO: створювати тут об'єкт типу LinqMapper і перекидуавти його до низу без перекидання SelectedArguments
-    private final List<String> selectedArguments;
+    protected final List<String> selectedArguments;
 
     public SelectiveTypeImpl(StringBuilder stringBuilder, Class<T> clazz) {
         this.stringBuilder = stringBuilder;
@@ -28,20 +26,19 @@ public class SelectiveTypeImpl<T> implements SelectiveType<T> {
         this.clazz = clazz;
     }
 
-    public CommandType<T> select(String... args) {
+    protected void executeSelect(String... args) {
         stringBuilder.append(SELECT)
                 .append(SPACE);
         appendArguments(args);
-        return new CommandTypeObject<>(stringBuilder, selectedArguments, clazz);
+//        return new CommandTypeImpl<>(stringBuilder, selectedArguments, clazz);
     }
 
-    @Override
-    public CommandType<T> selectAll() {
+    protected void executeSelectAll() {
         stringBuilder
                 .append(SELECT)
                 .append(SPACE);
         appendArguments(ClassUtility.getClassFields(clazz));
-        return new CommandTypeObject<>(stringBuilder, selectedArguments, clazz);
+//        return new CommandTypeImpl<>(stringBuilder, selectedArguments, clazz);
     }
 
     private void appendArguments(String... args) {
