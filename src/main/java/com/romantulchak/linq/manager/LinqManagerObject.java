@@ -1,16 +1,11 @@
 package com.romantulchak.linq.manager;
 
-import com.romantulchak.enums.ComparisonConstant;
-import com.romantulchak.linq.Linq;
-import com.romantulchak.linq.LinqMapper;
+import com.romantulchak.linq.mapper.LinqMapper;
 import com.romantulchak.linq.LinqObject;
-import com.romantulchak.linq.Manager;
 import com.romantulchak.type.object.SelectiveTypeObject;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.romantulchak.constants.LINQConstant.SPACE;
 
 public class LinqManagerObject<T>  implements LinqObject<T> {
     protected StringBuilder stringBuilder = new StringBuilder();
@@ -35,14 +30,14 @@ public class LinqManagerObject<T>  implements LinqObject<T> {
     public final T execute(T... classes) {
         clazz = initializeGenericClass(classes);
         LinqMapper<T> linqMapper = new LinqMapper<>(selectedArguments, currentClass);
-        return linqMapper.createObject(clazz, stringBuilder.toString()).orElseThrow();
+        return linqMapper.createObject(clazz, stringBuilder.toString()).orElse(null);
     }
 
-    public void setStringBuilder(StringBuilder stringBuilder) {
+    protected void setStringBuilder(StringBuilder stringBuilder) {
         this.stringBuilder = stringBuilder;
     }
 
-    public void setSelectedArguments(List<String> selectedArguments) {
+    protected void setSelectedArguments(List<String> selectedArguments) {
         this.selectedArguments = selectedArguments;
     }
 }

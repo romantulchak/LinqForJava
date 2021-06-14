@@ -2,6 +2,8 @@ package com.romantulchak.model;
 
 import com.romantulchak.linq.Persistable;
 
+import java.util.Objects;
+
 public class Person implements Persistable {
 
     private String name;
@@ -50,6 +52,11 @@ public class Person implements Persistable {
 
     public void setMemory(byte memory) {
         this.memory = memory;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(memory);
     }
 
     @Override

@@ -1,8 +1,5 @@
 package com.romantulchak.type.impl;
 
-import com.romantulchak.type.CommandType;
-import com.romantulchak.type.ConditionType;
-
 import java.util.List;
 
 import static com.romantulchak.constants.LINQConstant.*;

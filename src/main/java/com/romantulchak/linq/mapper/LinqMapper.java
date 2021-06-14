@@ -1,34 +1,42 @@
-package com.romantulchak.linq;
+package com.romantulchak.linq.mapper;
 
 import com.romantulchak.db.DatabaseConnection;
 import com.romantulchak.exception.CannotCreateInstanceOfClass;
 import com.romantulchak.exception.NotUniqueElementException;
+import com.romantulchak.linq.Persistable;
 import com.romantulchak.linq.manager.LinqManagerObject;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.*;
+import java.util.stream.Stream;
 
 public class LinqMapper<T> {
     private final List<String> selectedArguments;
     private final Class<?> executorClass;
-
+    private final Connection connection;
     public LinqMapper(List<String> selectedArguments, Class<?> executorClass) {
         this.selectedArguments = selectedArguments;
         this.executorClass = executorClass;
+        connection = DatabaseConnection.getInstance().getConnection();
+
     }
 
     public Optional<T> createObject(Class<T> clazz, String query) {
         ResultSet resultSet = getResultSet(query).orElseThrow(() -> new RuntimeException("Result set is null"));
-        T object = getObjectFromClass(clazz).orElseThrow(() -> new CannotCreateInstanceOfClass(clazz.getSimpleName()));
-        initializeObject(resultSet, object);
-        return Optional.of(object);
+        try {
+            if(resultSet.first()){
+                T object = getObjectFromClass(clazz).orElseThrow(() -> new CannotCreateInstanceOfClass(clazz.getSimpleName()));
+                initializeObject(resultSet, object);
+                return Optional.of(object);
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return Optional.empty();
     }
 
     private Optional<T> getObjectFromClass(Class<T> clazz) {
@@ -40,35 +48,36 @@ public class LinqMapper<T> {
         return Optional.empty();
     }
 
-    public Collection<T> createObjects(Class<T> clazz, String query){
+    public Collection<T> createObjects(Class<T> clazz, String query) {
         ResultSet resultSet = getResultSet(query).orElseThrow(() -> new RuntimeException("Result set is null"));
-        T object = getObjectFromClass(clazz).orElseThrow(() -> new CannotCreateInstanceOfClass(clazz.getSimpleName()));
         Collection<T> objects = new ArrayList<>();
         try {
             while (resultSet.next()) {
+                T object = getObjectFromClass(clazz).orElseThrow(() -> new CannotCreateInstanceOfClass(clazz.getSimpleName()));
                 initializeObject(resultSet, object);
                 objects.add(object);
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return objects;
     }
 
     private Optional<ResultSet> getResultSet(String query) {
-        DatabaseConnection instance = DatabaseConnection.getInstance();
-        try {
-            Statement statement = instance.getConnection().createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            ResultSet resultSet = statement.executeQuery(query);
-            if (resultSet.last()) {
+        if (!StringUtils.isBlank(query)) {
+            try {
+                PreparedStatement preparedStatement = connection.prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                ResultSet resultSet = preparedStatement.executeQuery();
+                resultSet.last();
                 int row = resultSet.getRow();
                 if (row != 1 && executorClass.equals(LinqManagerObject.class)) {
                     throw new NotUniqueElementException(row);
                 }
+                resultSet.beforeFirst();
+                return Optional.of(resultSet);
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
             }
-            return Optional.of(resultSet);
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
         }
         return Optional.empty();
     }
@@ -79,7 +88,7 @@ public class LinqMapper<T> {
         for (Field field : fields) {
             try {
                 getDataFromResultSet(resultSet, object, field);
-            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | SQLException e) {
                 e.printStackTrace();
             }
         }
@@ -97,16 +106,16 @@ public class LinqMapper<T> {
         return fieldsToReturn;
     }
 
-    private void getDataFromResultSet(ResultSet resultSet, T object, Field field) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        Method method;
-        if (field.getType().equals(Integer.class)) {
-            method = ResultSet.class.getDeclaredMethod("getInt", String.class);
-        } else {
-            method = ResultSet.class.getDeclaredMethod("get" + StringUtils.capitalize(field.getType().getSimpleName()), String.class);
-        }
-        Object result = method.invoke(resultSet, field.getName());
-        field.setAccessible(true);
-        field.set(object, result);
+    private void getDataFromResultSet(ResultSet resultSet, T object, Field field) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, SQLException {
+            Method method;
+            if (field.getType().equals(Integer.class)) {
+                method = ResultSet.class.getDeclaredMethod("getInt", String.class);
+            } else {
+                method = ResultSet.class.getDeclaredMethod("get" + StringUtils.capitalize(field.getType().getSimpleName()), String.class);
+            }
+            Object result = method.invoke(resultSet, field.getName());
+            field.setAccessible(true);
+            field.set(object, result);
     }
 
 

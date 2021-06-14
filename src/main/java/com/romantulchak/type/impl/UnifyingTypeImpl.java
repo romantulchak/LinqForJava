@@ -1,16 +1,12 @@
 package com.romantulchak.type.impl;
 
 import com.romantulchak.enums.ComparisonConstant;
-import com.romantulchak.linq.Linq;
-import com.romantulchak.linq.LinqCollection;
-import com.romantulchak.linq.LinqObject;
-import com.romantulchak.linq.Manager;
 import com.romantulchak.type.UnifyingType;
-import com.romantulchak.util.ClassUtility;
 
 import java.util.List;
 
-import static com.romantulchak.constants.LINQConstant.AND;
+import static com.romantulchak.constants.LINQConstant.*;
+import static com.romantulchak.util.ClassUtility.addQuotesToString;
 import static com.romantulchak.util.ClassUtility.getComparisonSymbol;
 
 public class UnifyingTypeImpl<T> implements UnifyingType<T>{
@@ -27,11 +23,21 @@ public class UnifyingTypeImpl<T> implements UnifyingType<T>{
 
     @Override
     public UnifyingType<T> and(String tableColumn, ComparisonConstant comparison, Object value) {
-        stringBuilder.append(AND)
-                .append(tableColumn)
-                .append(getComparisonSymbol(comparison))
-                .append(value);
+        getAppend(tableColumn, comparison, value, AND);
         return this;
     }
 
+    @Override
+    public UnifyingType<T> or(String tableColumn, ComparisonConstant comparisonConstant, Object value) {
+        getAppend(tableColumn, comparisonConstant, value, OR);
+        return this;
+    }
+
+    private void getAppend(String tableColumn, ComparisonConstant comparisonConstant, Object value, String command) {
+        stringBuilder.append(command)
+                .append(SPACE)
+                .append(tableColumn)
+                .append(getComparisonSymbol(comparisonConstant));
+        addQuotesToString(stringBuilder, value);
+    }
 }

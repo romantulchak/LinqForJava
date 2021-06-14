@@ -3,24 +3,32 @@ package com.romantulchak.type.object;
 import com.romantulchak.enums.ComparisonConstant;
 import com.romantulchak.linq.LinqObject;
 import com.romantulchak.linq.manager.LinqManagerObject;
-import com.romantulchak.type.impl.ConditionTypeImpl;
+import com.romantulchak.type.impl.UnifyingTypeImpl;
 
 import java.util.List;
 
 import static com.romantulchak.util.ClassUtility.setExecuteValues;
 
-public class ConditionTypeObject<T> extends ConditionTypeImpl<T> implements LinqObject<T>{
-
-    public ConditionTypeObject(StringBuilder stringBuilder, List<String> selectedArguments, Class<T> clazz) {
+public class UnifyingTypeObject<T> extends UnifyingTypeImpl<T> implements LinqObject<T> {
+    public UnifyingTypeObject(StringBuilder stringBuilder, List<String> selectedArguments, Class<T> clazz) {
         super(stringBuilder, selectedArguments, clazz);
     }
 
-    public UnifyingTypeObject<T> where(String tableColumn, ComparisonConstant comparison, Object value) {
-        executeWhere(tableColumn, comparison, value);
-        return new UnifyingTypeObject<>(stringBuilder, selectedArguments, clazz);
+    @Override
+    public UnifyingTypeObject<T> and(String tableColumn, ComparisonConstant comparison, Object value) {
+        super.and(tableColumn, comparison, value);
+        return this;
+    }
+
+
+    @Override
+    public UnifyingTypeObject<T> or(String tableColumn, ComparisonConstant comparison, Object value) {
+        super.or(tableColumn, comparison, value);
+        return this;
     }
 
     @SafeVarargs
+    @Override
     public final T execute(T... classes) {
         LinqManagerObject<T> linqManagerObject = new LinqManagerObject<>();
         setExecuteValues(stringBuilder, "setStringBuilder", linqManagerObject, StringBuilder.class);

@@ -2,8 +2,6 @@ package com.romantulchak.type.impl;
 
 import com.romantulchak.exception.ArgumentIsEmptyException;
 import com.romantulchak.exception.UncorrectedNumberOfArgumentsException;
-import com.romantulchak.type.CommandType;
-import com.romantulchak.type.SelectiveType;
 import com.romantulchak.util.ClassUtility;
 import org.apache.commons.lang3.StringUtils;
 
@@ -12,7 +10,7 @@ import java.util.List;
 
 import static com.romantulchak.constants.LINQConstant.*;
 
-public class SelectiveTypeImpl<T> implements SelectiveType<T> {
+public class SelectiveTypeImpl<T> {
     protected final StringBuilder stringBuilder;
 
     protected final Class<T> clazz;
@@ -30,15 +28,12 @@ public class SelectiveTypeImpl<T> implements SelectiveType<T> {
         stringBuilder.append(SELECT)
                 .append(SPACE);
         appendArguments(args);
-//        return new CommandTypeImpl<>(stringBuilder, selectedArguments, clazz);
     }
 
     protected void executeSelectAll() {
-        stringBuilder
-                .append(SELECT)
+        stringBuilder.append(SELECT)
                 .append(SPACE);
         appendArguments(ClassUtility.getClassFields(clazz));
-//        return new CommandTypeImpl<>(stringBuilder, selectedArguments, clazz);
     }
 
     private void appendArguments(String... args) {

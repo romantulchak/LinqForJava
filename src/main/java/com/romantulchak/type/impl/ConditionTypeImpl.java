@@ -1,10 +1,7 @@
 package com.romantulchak.type.impl;
 
 import com.romantulchak.enums.ComparisonConstant;
-import com.romantulchak.linq.LinqObject;
-import com.romantulchak.linq.manager.LinqManagerObject;
-import com.romantulchak.type.ConditionType;
-import com.romantulchak.type.UnifyingType;
+import com.romantulchak.util.ClassUtility;
 
 import java.util.List;
 
@@ -28,13 +25,7 @@ public class ConditionTypeImpl<T>{
         stringBuilder.append(WHERE)
                 .append(SPACE)
                 .append(tableColumn)
-                .append(getComparisonSymbol(comparison))
-                .append("'")
-                .append(value)
-                .append("'");
+                .append(getComparisonSymbol(comparison));
+        ClassUtility.addQuotesToString(stringBuilder, value);
     }
-
-
-
-
 }
