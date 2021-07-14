@@ -107,15 +107,15 @@ public class LinqMapper<T> {
     }
 
     private void getDataFromResultSet(ResultSet resultSet, T object, Field field) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, SQLException {
-            Method method;
-            if (field.getType().equals(Integer.class)) {
-                method = ResultSet.class.getDeclaredMethod("getInt", String.class);
-            } else {
-                method = ResultSet.class.getDeclaredMethod("get" + StringUtils.capitalize(field.getType().getSimpleName()), String.class);
-            }
-            Object result = method.invoke(resultSet, field.getName());
-            field.setAccessible(true);
-            field.set(object, result);
+        Method method;
+        if (field.getType().equals(Integer.class)) {
+            method = ResultSet.class.getDeclaredMethod("getInt", String.class);
+        } else {
+            method = ResultSet.class.getDeclaredMethod("get" + StringUtils.capitalize(field.getType().getSimpleName()), String.class);
+        }
+        Object result = method.invoke(resultSet, field.getName());
+        field.setAccessible(true);
+        field.set(object, result);
     }
 
 

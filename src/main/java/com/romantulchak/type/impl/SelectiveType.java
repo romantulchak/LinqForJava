@@ -10,7 +10,7 @@ import java.util.List;
 
 import static com.romantulchak.constants.LINQConstant.*;
 
-public class SelectiveTypeImpl<T> {
+public class SelectiveType<T> {
     protected final StringBuilder stringBuilder;
 
     protected final Class<T> clazz;
@@ -18,7 +18,7 @@ public class SelectiveTypeImpl<T> {
     //TODO: створювати тут об'єкт типу LinqMapper і перекидуавти його до низу без перекидання SelectedArguments
     protected final List<String> selectedArguments;
 
-    public SelectiveTypeImpl(StringBuilder stringBuilder, Class<T> clazz) {
+    public SelectiveType(StringBuilder stringBuilder, Class<T> clazz) {
         this.stringBuilder = stringBuilder;
         this.selectedArguments = new ArrayList<>();
         this.clazz = clazz;

@@ -10,4 +10,9 @@ public interface LINQConstant {
     String SPACE = " ";
     String DISTINCT = "DISTINCT";
     String COMA = ",";
+    String LEFT = " LEFT";
+    String JOIN = " JOIN";
+    String OUTER = " OUTER";
+    String RIGHT = " RIGHT";
+    String ON = " ON";
 }

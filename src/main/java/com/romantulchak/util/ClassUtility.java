@@ -1,8 +1,10 @@
 package com.romantulchak.util;
 
 import com.romantulchak.enums.ComparisonConstant;
+import com.romantulchak.linq.Persistable;
 import com.romantulchak.linq.manager.LinqManagerObject;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -12,14 +14,21 @@ import static com.romantulchak.constants.LINQConstant.SPACE;
 
 public class ClassUtility {
 
+    //TODO: update this method
+
     public static String[] getClassFields(Class<?> clazz) {
         Field[] declaredFields = clazz.getDeclaredFields();
         if (declaredFields.length != 0) {
             return Arrays.stream(declaredFields)
-                    .map(Field::getName)
+                    .map(ClassUtility::getSerializable)
                     .toArray(String[]::new);
         }
         return new String[]{};
+    }
+
+    private static Serializable getSerializable(Field field) {
+        field.getClass().isAssignableFrom(Persistable.class);
+        return field.getName();
     }
 
     public static String getComparisonSymbol(ComparisonConstant comparison) {

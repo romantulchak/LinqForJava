@@ -6,13 +6,16 @@ import java.util.Objects;
 
 public class Person implements Persistable {
 
+    private long id;
+
     private String name;
 
     private long age;
 
     private short height;
 
-    private byte memory;
+    private Test1 test1;
+
 
     public Person() {
 
@@ -46,26 +49,29 @@ public class Person implements Persistable {
         this.height = height;
     }
 
-    public byte getMemory() {
-        return memory;
+    public long getId() {
+        return id;
     }
 
-    public void setMemory(byte memory) {
-        this.memory = memory;
+    public void setId(long id) {
+        this.id = id;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(memory);
+    public Test1 getTest1() {
+        return test1;
+    }
+
+    public void setTest1(Test1 test1) {
+        this.test1 = test1;
     }
 
     @Override
     public String toString() {
-        return "Person{" +
+        return "\nPerson{" +
                 "name='" + name + '\'' +
                 ", age=" + age +
                 ", height=" + height +
-                ", memory=" + memory +
-                '}';
+                '}' +
+                "\n";
     }
 }

@@ -1,8 +1,8 @@
 package com.romantulchak.type.object;
 
-import com.romantulchak.type.impl.SelectiveTypeImpl;
+import com.romantulchak.type.impl.SelectiveType;
 
-public class SelectiveTypeObject<T> extends SelectiveTypeImpl<T> {
+public class SelectiveTypeObject<T> extends SelectiveType<T> {
 
 
     public SelectiveTypeObject(StringBuilder stringBuilder, Class<T> clazz) {

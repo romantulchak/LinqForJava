@@ -37,9 +37,24 @@ public class Main {
 //        System.out.println(execute);
 
 
-        LinqManagerCollection<Person> collection = new LinqManagerCollection<>();
-        Set<Person> test = new HashSet<>(collection.linq().selectAll().from("test").execute());
-        System.out.println(test);
+        LinqManagerCollection<Person> linqManagerCollection = new LinqManagerCollection<>();
+        Collection<Person> execute = linqManagerCollection.linq()
+                .select("name")
+                .from("test")
+                .execute();
+        System.out.println(execute);
+//        LinqManagerObject<Person> t = new LinqManagerObject<>();
+//        Person execute = t
+//                .linq()
+//                .selectAll()
+//                .distinct()
+//                .from("test")
+//                .where("name", EQUAL, "vadik")
+//                .execute();
+//        System.out.println(execute);
+
+
+
 
 //        linqManagerObject.
 

@@ -1,9 +1,8 @@
 package com.romantulchak.type.collection;
 
-import com.romantulchak.type.impl.SelectiveTypeImpl;
-import com.romantulchak.type.object.CommandTypeObject;
+import com.romantulchak.type.impl.SelectiveType;
 
-public class SelectiveTypeCollection<T> extends SelectiveTypeImpl<T> {
+public class SelectiveTypeCollection<T> extends SelectiveType<T> {
     public SelectiveTypeCollection(StringBuilder stringBuilder, Class<T> clazz) {
         super(stringBuilder, clazz);
     }
